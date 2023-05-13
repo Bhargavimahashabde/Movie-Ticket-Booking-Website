@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Movie Ticket Booking - Book Tickets</title>
+    <link rel="stylesheet" type="text/css" href="stylebooking.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <header>
+      <h1>Movie Ticket Booking - Book Tickets</h1>
+	  <p>The next show starts in:</p>
+	  <p id="countdown-timer"></p>
+	  <p>Please fill out the form below to book your tickets:</p>
+    </header>
+    
+    <nav>
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="now-showing.html">Now Showing</a></li>
+      </ul>
+    </nav>
+    
+    <main>
+      <h2>Select a movie and seats</h2>
+      
+      <form onsubmit="return validateForm()">
+        <label for="movie">Select a movie:</label>
+        <select id="movie" name="movie">
+          <option value="">--Select--</option>
+          <option value="avengers">Avengers: Endgame</option>
+          <option value="jungle">Jungle Cruise</option>
+          <option value="quiet">A Quiet Place Part II</option>
+        </select>
+        
+<label for="genre">Filter movies by genre:</label>
+    <select id="genre" name="genre">
+      <option value="">--Select--</option>
+      <option value="action">Action</option>
+      <option value="adventure">Adventure</option>
+      <option value="horror">Horror</option>
+    </select>
+
+        <label for="seats">Select seats:</label>
+        <div id="seats">
+          <div class="seat" onclick="toggleSeat(this)">1</div>
+          <div class="seat" onclick="toggleSeat(this)">2</div>
+          <div class="seat" onclick="toggleSeat(this)">3</div>
+          <div class="seat booked">4</div>
+          <div class="seat" onclick="toggleSeat(this)">5</div>
+          <div class="seat" onclick="toggleSeat(this)">6</div>
+          <div class="seat" onclick="toggleSeat(this)">7</div>
+          <div class="seat" onclick="toggleSeat(this)">8</div>
+          <div class="seat" onclick="toggleSeat(this)">9</div>
+          <div class="seat" onclick="toggleSeat(this)">10</div>
+        </div>
+        
+		<label for="name">Name:</label><br>
+		<input type="text" id="name" name="name"><br>
+		<label for="email">Email:</label><br>
+		<input type="email" id="email" name="email"><br>
+		<label for="tickets">Number of Tickets:</label><br>
+		<input type="number" id="tickets" name="tickets"><br><br>
+		
+        <button type="submit">Book Now</button>
+        <button type="reset">Reset</button>
+      </form>
+
+      <div id="seat-count"></div>
+      <div id="total-price"></div>
+
+      <div id="error-message" style="display:none;">Please select at least one seat</div>
+	  
+	  <div>
+	    <label for="search">Search by title:</label>
+	    <input type="text" id="search" name="search">
+	    <button onclick="searchMovies()">Search</button>
+	    <ul id="search-results"></ul>
+	  </div>
+    </main>
+    
+    <footer>
+      <p>© 2023 Movie Ticket Booking. All rights reserved.</p>
+    </footer>
+    
+     <script>
+// Get references to the necessary DOM elements
+const movieSelect = document.getElementById("movie");
+const seatsContainer = document.getElementById("seats");
+const seatCount = document.getElementById("seat-count");
+const totalPrice = document.getElementById("total-price");
+const errorMessage = document.getElementById("error-message");
+
+// Define the seat availability and price for each movie
+const seatAvailability = {
+  avengers: {seats: [true, true, true, false, true, true, true, true, true, true], price: 10},
+  jungle: {seats: [true, true, true, true, true, false, false, true, true, true], price: 8},
+  quiet: {seats: [false, true, true, true, true, true, true, true, true, true], price: 12},
+};
+
+// Initialize the selected seats and total price to 0
+let selectedSeats = [];
+let total = 0;
+
+// Update the seat availability when the movie is changed
+movieSelect.addEventListener("change", function() {
+  const selectedMovie = movieSelect.value;
+  const seats = seatAvailability[selectedMovie].seats;
+  const price = seatAvailability[selectedMovie].price;
+
+  // Clear the seats container and reset the selected seats and total price
+  seatsContainer.innerHTML = "";
+  selectedSeats = [];
+  total = 0;
+
+  // Generate the seats for the selected movie
+  for (let i = 0; i < seats.length; i++) {
+    const seat = document.createElement("div");
+    seat.classList.add("seat");
+    if (seats[i]) {
+      seat.classList.add("available");
+      // Add an event listener to each available seat
+      seat.addEventListener("click", function() {
+        // Check if the seat is already selected
+        if (this.classList.contains("selected")) {
+          // Deselect the seat
+          this.classList.remove("selected");
+          // Update the selected seats and total price
+          selectedSeats = Array.from(document.querySelectorAll(".seat.selected")).map(seat => seat.textContent);
+          total = selectedSeats.length * price;
+        } else {
+          // Select the seat
+          this.classList.add("selected");
+          // Update the selected seats and total price
+          selectedSeats = Array.from(document.querySelectorAll(".seat.selected")).map(seat => seat.textContent);
+          total = selectedSeats.length * price;
+        }
+        // Update the seat count and total price display
+        seatCount.textContent = selectedSeats.length;
+        totalPrice.textContent = total;
+      });
+    } else {
+      seat.classList.add("booked");
+    }
+    seat.textContent = i + 1;
+    seatsContainer.appendChild(seat);
+  }
+});
+
+// Validate the form on submit
+function validateForm() {
+  if (selectedSeats.length === 0) {
+    errorMessage.style.display = "block";
+    return false;
+  } else {
+    errorMessage.style.display = "none";
+    return true;
+  }
+};
+
+// Set the date and time of the show
+		var countDownDate = new Date("May 13, 2023 18:00:00").getTime();
+
+		// Update the count down every 1 second
+		var x = setInterval(function() {
+
+			// Get the current date and time
+			var now = new Date().getTime();
+
+			// Find the distance between now and the count down date
+			var distance = countDownDate - now;
+
+			// Calculate the days, hours, minutes and seconds left
+			var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+			var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+			// Output the result in an element with id="countdown-timer"
+			document.getElementById("countdown-timer").innerHTML = days + "d " + hours + "h "
+			+ minutes + "m " + seconds + "s ";
+
+			// If the count down is over, display a message
+			if (distance < 0) {
+				clearInterval(x);
+				document.getElementById("countdown-timer").innerHTML = "The show has started!";
+			}
+		}, 1000);
+
+function searchMovies() {
+  const searchQuery = document.getElementById("search").value.toLowerCase();
+  const movies = ["Avengers: Endgame", "Jungle Cruise", "A Quiet Place Part II"];
+  const searchResults = [];
+
+  for (let i = 0; i < movies.length; i++) {
+    const movieTitle = movies[i].toLowerCase();
+    if (movieTitle.includes(searchQuery)) {
+      searchResults.push(movies[i]);
+    }
+  }
+
+  const searchResultsList = document.getElementById("search-results");
+  searchResultsList.innerHTML = "";
+
+  if (searchResults.length === 0) {
+    searchResultsList.innerHTML = "No results found.";
+  } else {
+    for (let i = 0; i < searchResults.length; i++) {
+      const listItem = document.createElement("li");
+      listItem.textContent = searchResults[i];
+      searchResultsList.appendChild(listItem);
+    }
+  }
+}
+
+// Define the movie data as an array of objects
+const movies = [
+  {
+    title: 'Avengers: Endgame',
+    genre: 'Action',
+    seats: 50,
+    booked: 15,
+    price: 10
+  },
+  {
+    title: 'Jungle Cruise',
+    genre: 'Adventure',
+    seats: 30,
+    booked: 10,
+    price: 8
+  },
+  {
+    title: 'A Quiet Place Part II',
+    genre: 'Horror',
+    seats: 20,
+    booked: 5,
+    price: 12
+  },
+  {
+    title: 'The Matrix Resurrections',
+    genre: 'Action',
+    seats: 25,
+    booked: 12,
+    price: 15
+  }
+];
+
+// Get a reference to the select element and add event listener
+const selectElement = document.getElementById('genre');
+selectElement.addEventListener('change', filterMoviesByGenre);
+
+// Function to filter movies by selected genre
+function filterMoviesByGenre() {
+  // Get the selected genre
+  const selectedGenre = selectElement.value;
+
+  // Get a reference to the search results element
+  const searchResultsElement = document.getElementById('search-results');
+
+  // Clear any existing search results
+  searchResultsElement.innerHTML = '';
+
+  // Filter the movies by selected genre
+  const filteredMovies = movies.filter(movie => movie.genre === selectedGenre);
+
+  // Create a list item for each movie and append to search results element
+  filteredMovies.forEach(movie => {
+    const listItem = document.createElement('li');
+    listItem.textContent = movie.title;
+    searchResultsElement.appendChild(listItem);
+  });
+}
+
+// Define the movies data
+var movies = [
+  {
+    title: "Avengers: Endgame",
+    genre: "Action",
+    seats: 100,
+    price: 10
+  },
+  {
+    title: "Jungle Cruise",
+    genre: "Adventure",
+    seats: 100,
+    price: 8
+  },
+  {
+    title: "A Quiet Place Part II",
+    genre: "Horror",
+    seats: 100,
+    price: 12
+  },
+  {
+    title: "The Matrix Resurrections",
+    genre: "Action",
+    seats: 100,
+    price: 12.50
+  },
+  {
+    title: "Dune",
+    genre: "Science Fiction",
+    seats: 100,
+    price: 11.50
+  }
+];
+
+// Display all movies by default
+var filteredMovies = movies;
+
+// Display all movies by default
+displayMovies(filteredMovies);
+
+// Get the genre filter dropdown
+var genre = document.getElementById("genre");
+
+// Add a change event listener to the dropdown
+genreFilter.addEventListener("change", function() {
+  // Get the selected genre
+  var selectedGenre = genre.value;
+
+  // Filter the movies by genre
+  filteredMovies = movies.filter(function(movie) {
+    return movie.genre === selectedGenre;
+  });
+
+  // Display the filtered movies
+  displayMovies(filteredMovies);
+});
+
+}
+
+</script>
+
+  </body>
+</html>

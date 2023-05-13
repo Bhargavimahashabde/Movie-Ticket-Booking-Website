@@ -1,0 +1,170 @@
+/* Global styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
+
+nav {
+  background-color: #ddd;
+  padding: 10px;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav li {
+  margin: 0 10px;
+}
+
+nav a {
+  color: #333;
+  text-decoration: none;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+label {
+  margin-top: 10px;
+}
+
+select {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#seats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.seat {
+  width: 50px;
+  height: 50px;
+  background-color: #008000;
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.booked {
+  background-color: #000080;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+/* New style for selected seats */
+.selected {
+  background-color: #ffd700;
+}
+
+/* New style for canceled seats */
+.canceled {
+  background-color: #000080;
+}
+
+#seat-count, #total-price {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#seat-count::before {
+ color: red; 
+ content: "Total number of seats booked: ";
+}
+
+#total-price::before {
+  color: red;
+  content: "Total price to be paid: Rs ";
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #666;
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  margin-top: 50px;
+}
+
+/* New style for error message */
+#error-message {
+  display: block;
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* New style for the tooltip */
+.tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #000 transparent transparent transparent;
+}
+
+.seat:hover .tooltip {
+  visibility: visible;
+}
